@@ -1,12 +1,15 @@
 import type { Sku } from "./catalog.ts";
-
-export type Inventory = Map<Sku, number>;
+import type { InventoryStore } from "./inventory-store.ts";
 
 export type Reservation = { ok: true } | { ok: false; reason: "out-of-stock" };
 
-export function reserveStock(inventory: Inventory, sku: Sku, quantity: number): Reservation {
-  const available = inventory.get(sku) ?? 0;
+export async function reserveStock(
+  store: InventoryStore,
+  sku: Sku,
+  quantity: number,
+): Promise<Reservation> {
+  const available = await store.get(sku);
   if (available < quantity) return { ok: false, reason: "out-of-stock" };
-  inventory.set(sku, available - quantity);
+  await store.decrement(sku, quantity);
   return { ok: true };
 }

@@ -1,6 +1,7 @@
 import { type CartLine, priceCart } from "./cart.ts";
 import type { Sku } from "./catalog.ts";
-import { type Inventory, reserveStock } from "./stock.ts";
+import type { InventoryStore } from "./inventory-store.ts";
+import { reserveStock } from "./stock.ts";
 
 export type OrderRequest = {
   customerId: string;
@@ -19,14 +20,14 @@ export type PlacedOrder = {
 export type OrderResult = { ok: true; order: PlacedOrder } | { ok: false; reason: "out-of-stock"; sku: Sku };
 
 export type OrderDeps = {
-  inventory: Inventory;
+  store: InventoryStore;
   now: () => Date;
   nextId: () => string;
 };
 
 export async function placeOrder(deps: OrderDeps, request: OrderRequest): Promise<OrderResult> {
   for (const line of request.lines) {
-    const reservation = reserveStock(deps.inventory, line.sku, line.quantity);
+    const reservation = await reserveStock(deps.store, line.sku, line.quantity);
     if (!reservation.ok) return { ok: false, reason: reservation.reason, sku: line.sku };
   }
   const quote = priceCart(request.lines, request.promoCode);
