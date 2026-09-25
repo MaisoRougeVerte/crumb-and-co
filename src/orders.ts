@@ -5,6 +5,7 @@ import { type Inventory, reserveStock } from "./stock.ts";
 export type OrderRequest = {
   customerId: string;
   lines: readonly CartLine[];
+  promoCode?: string;
 };
 
 export type PlacedOrder = {
@@ -28,7 +29,7 @@ export async function placeOrder(deps: OrderDeps, request: OrderRequest): Promis
     const reservation = reserveStock(deps.inventory, line.sku, line.quantity);
     if (!reservation.ok) return { ok: false, reason: reservation.reason, sku: line.sku };
   }
-  const quote = priceCart(request.lines);
+  const quote = priceCart(request.lines, request.promoCode);
   return {
     ok: true,
     order: {
