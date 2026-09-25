@@ -13,11 +13,13 @@ export type Quote = {
 };
 
 export function priceCart(lines: readonly CartLine[], promoCode?: string): Quote {
-  const subtotalCents = lines.reduce(
-    (sum, line) => sum + catalog[line.sku].priceCents * line.quantity,
+  // Work in euros once instead of converting every line, then round at the end.
+  const subtotal = lines.reduce(
+    (sum, line) => sum + (catalog[line.sku].priceCents / 100) * line.quantity,
     0,
   );
-  // Round the discount itself to the nearest cent so the receipt always adds up.
-  const discountCents = Math.round((subtotalCents * discountPercent(promoCode)) / 100);
-  return { subtotalCents, discountCents, totalCents: subtotalCents - discountCents };
+  const total = subtotal * (1 - discountPercent(promoCode) / 100);
+  const subtotalCents = Math.round(subtotal * 100);
+  const totalCents = Math.round(total * 100);
+  return { subtotalCents, discountCents: subtotalCents - totalCents, totalCents };
 }
