@@ -3,6 +3,7 @@ import { type OrderRequest, type OrderResult, placeOrder } from "./orders.ts";
 import type { Inventory } from "./stock.ts";
 
 export { priceCart } from "./cart.ts";
+export { dailySales } from "./report.ts";
 export type { Sku } from "./catalog.ts";
 export type { OrderRequest, OrderResult, PlacedOrder } from "./orders.ts";
 
