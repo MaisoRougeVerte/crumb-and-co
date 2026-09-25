@@ -25,3 +25,12 @@ describe("placeOrder", () => {
     expect(second).toEqual({ ok: false, reason: "out-of-stock", sku: "baguette-tradition" });
   });
 });
+
+describe("order logs", () => {
+  it("logs every placed order", async () => {
+    const entries: unknown[] = [];
+    const bakery = createBakery({ stock: { croissant: 2 }, log: (entry) => entries.push(entry) });
+    await bakery.placeOrder({ customerId: "cust_0003", lines: [{ sku: "croissant", quantity: 1 }] });
+    expect(entries).toMatchObject([{ level: "info", event: "order.placed", customerId: "cust_0003" }]);
+  });
+});

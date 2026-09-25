@@ -1,8 +1,10 @@
 import type { Sku } from "./catalog.ts";
 import { createMemoryStore } from "./inventory-store.ts";
+import { type Logger, silentLogger } from "./logger.ts";
 import { type OrderRequest, type OrderResult, placeOrder } from "./orders.ts";
 
 export { priceCart } from "./cart.ts";
+export { jsonLinesLogger, type LogEntry, type Logger } from "./logger.ts";
 export { dailySales } from "./report.ts";
 export type { Sku } from "./catalog.ts";
 export type { OrderRequest, OrderResult, PlacedOrder } from "./orders.ts";
@@ -10,6 +12,7 @@ export type { OrderRequest, OrderResult, PlacedOrder } from "./orders.ts";
 export type BakeryOptions = {
   stock: Partial<Record<Sku, number>>;
   now?: () => Date;
+  log?: Logger;
 };
 
 export type Bakery = {
@@ -25,6 +28,7 @@ export function createBakery(options: BakeryOptions): Bakery {
     store,
     now: options.now ?? (() => new Date()),
     nextId: () => `ord_${String(++sequence).padStart(5, "0")}`,
+    log: options.log ?? silentLogger,
   };
   return {
     placeOrder: (request) => placeOrder(deps, request),
