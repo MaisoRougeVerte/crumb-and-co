@@ -1,18 +1,11 @@
 import type { PlacedOrder } from "./orders.ts";
 
-// The shop closes its books on Paris days, not UTC days.
-const parisDay = new Intl.DateTimeFormat("en-CA", {
-  timeZone: "Europe/Paris",
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-});
-
+// placedAt is already an ISO string, so its first ten characters are the day.
 export function dayOf(order: PlacedOrder): string {
-  return parisDay.format(new Date(order.placedAt));
+  return order.placedAt.slice(0, 10);
 }
 
-/** Total sales in cents per Paris calendar day, formatted YYYY-MM-DD. */
+/** Total sales in cents per calendar day, formatted YYYY-MM-DD. */
 export function dailySales(orders: readonly PlacedOrder[]): Map<string, number> {
   const totals = new Map<string, number>();
   for (const order of orders) {
