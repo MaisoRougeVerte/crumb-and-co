@@ -2,7 +2,7 @@ import { type CartLine, priceCart } from "./cart.ts";
 import type { Sku } from "./catalog.ts";
 import type { InventoryStore } from "./inventory-store.ts";
 import type { Logger } from "./logger.ts";
-import { reserveStock } from "./stock.ts";
+import { reserveInventory } from "./inventory.ts";
 
 export type OrderRequest = {
   customerId: string;
@@ -29,7 +29,7 @@ export type OrderDeps = {
 
 export async function placeOrder(deps: OrderDeps, request: OrderRequest): Promise<OrderResult> {
   for (const line of request.lines) {
-    const reservation = await reserveStock(deps.store, line.sku, line.quantity);
+    const reservation = await reserveInventory(deps.store, line.sku, line.quantity);
     if (!reservation.ok) return { ok: false, reason: reservation.reason, sku: line.sku };
     const left = await deps.store.get(line.sku);
     if (left < 0) deps.log({ level: "warn", event: "stock.negative", sku: line.sku, left });
