@@ -1,0 +1,4 @@
+{
+  "install": ["pnpm", "install", "--frozen-lockfile"],
+  "test": ["node_modules/.bin/vitest", "run"]
+}
