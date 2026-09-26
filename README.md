@@ -11,6 +11,6 @@ pnpm test
 ## About this repository
 
 This is a sample project created during the IBM Bob 2.0 hackathon, on 26 September 2026, as
-the demo target of [Objection!](https://github.com/MaisoRougeVerte/objection). It contains
+the demo target of [Exhibit A](https://github.com/MaisoRougeVerte/exhibit-a). It contains
 bugs planted on purpose, described from the customer's side in `docs/bug-reports/`. Customers,
 orders and logs are invented. Do not use this code in production.
